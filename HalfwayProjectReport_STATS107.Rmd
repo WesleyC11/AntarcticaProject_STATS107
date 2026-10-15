@@ -8,5 +8,4 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-Are these changes showing?
-
+Practice <- read.csv("PalmerStation_Monthly_Weather.csv")

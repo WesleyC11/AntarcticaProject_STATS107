@@ -1,0 +1,14 @@
+---
+title: "HalfwayProjectReport_STATS107"
+author: "Wesley Cross, Selina Syed, Jack Donnelley"
+date: "2026-10-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+allweather <- read.csv("PalmerStation_Monthly_Weather.csv")
+```

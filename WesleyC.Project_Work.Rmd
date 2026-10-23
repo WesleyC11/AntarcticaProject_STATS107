@@ -1,0 +1,22 @@
+---
+title: "Wesley Work on Antarctica Project - 10/22"
+author: "Wesley Cross"
+date: "Due Nov 6th"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+##First, read in the .csv files to get the data for preliminary analysis:
+weather <- read.csv("PalmerStation_Monthly_Weather.csv")
+seaicearea <- read.csv("SeaIceArea_grid_moneao_1978_2024.csv")
+seaiceper <- read.csv("SeaIce%_p5_monsic_1978_2024.csv")
+
+View(weather)
+View(seaicearea)
+
+##Then, 
+```

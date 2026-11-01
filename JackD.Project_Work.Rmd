@@ -1,0 +1,88 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+options(scipen = 999)
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+```
+
+## Data Loading and Integration
+
+We read the raw data files into the workspace, parse their text dates into formal R Date formats, and combine them using uniform `Date` join parameters restricted to the 1993–2023 timeframe.
+
+```{r}
+weather    <- read.csv("Monthly_Weather_Clean.csv")
+seaicearea <- read.csv("SeaIceArea_Clean.csv")
+seaiceconc <- read.csv("SeaIceConc_Clean.csv")
+
+
+weather_clean_mutated <- mutate(weather, Date = as.Date(Date, format = "%m/%d/%Y"))
+weather_clean <- select(weather_clean_mutated, Date, 
+  Surface_Temp = Mean_Temperature_C, 
+  Mean_SST_C = Mean_Sea_Surface_Temperature_C)
+
+
+seaicearea_filtered <- filter(seaicearea, Subregion == "WAP")
+seaicearea_mutated <- mutate(seaicearea_filtered, Date = as.Date(paste(Year, Month, "01", sep = "-"), format = "%Y-%m-%d"))
+seaicearea_clean <- select(seaicearea_mutated, Date, Sea_Ice_Area = Sea_ice_area)
+
+seaiceconc_filtered <- filter(seaiceconc, Subregion == "Anv")
+seaiceconc_mutated <- mutate(seaiceconc_filtered, Date = as.Date(paste(Year, Month, "01", sep = "-"), format = "%Y-%m-%d"))
+seaiceconc_clean <- select(seaiceconc_mutated, Date, Sea_Ice_Conc = Mean_sea_ice_conc)
+
+
+
+
+project_data_join1 <- left_join(weather_clean, seaicearea_clean, by = "Date")
+project_data_join2 <- left_join(project_data_join1, seaiceconc_clean, by = "Date")
+project_data <- mutate(project_data_join2, Sea_Ice_Area = as.numeric(Sea_Ice_Area),
+  Sea_Ice_Conc = as.numeric(Sea_Ice_Conc))
+```
+
+## Graph 1: Mean Sea Surface Temperature (SST) vs. Time
+
+```{r}
+sst_timeline_data <- filter(project_data, !is.na(Date), !is.na(Mean_SST_C))
+
+ggplot(sst_timeline_data, aes(x = Date, y = Mean_SST_C)) +
+  geom_line(color = "darkcyan", linewidth = 0.6) +
+  geom_smooth(method = "lm", color = "black", linetype = "dashed", se = FALSE) +
+  labs(title = "Monthly Mean Sea Surface Temperature vs. Time",
+    subtitle = "1978-11-01 to 2024-04-01",
+    x = "Year",
+    y = "Mean Sea Surface Temperature (°C)")
+sst_time_model <- lm(Mean_SST_C ~ Date, data = sst_timeline_data)
+summary(sst_time_model)$coefficients
+```
+
+## Graph 2: Surface Temperature vs. Sea Ice Area
+
+```{r}
+area_temp_data <- filter(project_data, !is.na(Surface_Temp), !is.na(Sea_Ice_Area))
+
+ggplot(area_temp_data, aes(x = Sea_Ice_Area, y = Surface_Temp)) +
+  geom_point(alpha = 0.6, color = "purple") +
+  geom_smooth(method = "lm", color = "black", linewidth = 1) +
+  labs(title = "Surface Temperature vs. Sea Ice Area",
+    subtitle = "1978-11-01 to 2024-04-01",
+    x = "Monthly Sea Ice Area (km²)",
+    y = "Monthly Mean Surface Temperature (°C)")
+area_temp_model <- lm(Surface_Temp ~ Sea_Ice_Area, data = area_temp_data)
+summary(area_temp_model)$coefficients
+```
+
+## Graph 3: Surface Temperature vs. Sea Ice Concentration
+
+```{r}
+conc_temp_data <- filter(project_data, !is.na(Surface_Temp), !is.na(Sea_Ice_Conc))
+
+ggplot(conc_temp_data, aes(x = Sea_Ice_Conc, y = Surface_Temp)) +
+  geom_point(alpha = 0.6, color = "purple") +
+  geom_smooth(method = "lm", color = "black", linewidth = 1) +
+  labs(title = "Surface Temperature vs. Sea Ice Concentration",
+    subtitle = "1978-11-01 to 2024-04-01",
+    x = "Mean Sea Ice Concentration (%)",
+    y = "Monthly Mean Surface Temperature (°C)")
+conc_temp_model <- lm(Surface_Temp ~ Sea_Ice_Conc, data = conc_temp_data)
+summary(conc_temp_model)$coefficients
+```

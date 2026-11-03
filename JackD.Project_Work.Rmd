@@ -1,0 +1,125 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+options(scipen = 999)
+```
+## NOTE: Add points at start and end of each graph to show change
+
+
+## Data Loading and Integration
+
+
+```{r}
+
+weather <- read.csv("Monthly_Weather_Clean.csv")
+seaicearea <- read.csv("SeaIceArea_Clean.csv")
+seaiceconc <- read.csv("SeaIceConc_Clean.csv")
+
+
+weatherClean <- data.frame(
+  Date = as.Date(weather$Date, format = "%m/%d/%Y"),
+  surfaceTemp = weather$Mean_Temperature_C,
+  MseaSurfaceTemp = weather$Mean_Sea_Surface_Temperature_C)
+
+areaFiltered <- subset(seaicearea, Subregion == "WAP")
+SSIclean <- data.frame(
+  Date = as.Date(paste(areaFiltered$Year, areaFiltered$Month, "01", sep = "-"),
+                 format = "%Y-%m-%d"),
+  SIA = areaFiltered$Sea_ice_area)
+
+SSIfiltered <- subset(seaiceconc, Subregion == "Anv")
+SIAfiltered <- data.frame(
+  Date = as.Date(paste(SSIfiltered$Year, SSIfiltered$Month, "01", sep = "-"),
+                 format = "%Y-%m-%d"),
+  SIA = SSIfiltered$Mean_sea_ice_conc)
+projectData <- weatherClean
+projectData$SIA <- as.numeric(
+  SSIclean$SIA[match(weatherClean$Date, SSIclean$Date)])
+projectData$SIA <- as.numeric(
+  SIAfiltered$SIA[match(weatherClean$Date, SIAfiltered$Date)])
+
+```
+
+## Helper functions for plotting
+
+```{r}
+
+TITLEADDER <- function(title, subtitle) {
+  title(main = title, adj = 0, line = 2.2, cex.main = 1.2)
+  mtext(subtitle, side = 3, adj = 0, line = 0.8, cex = 0.9, col = "grey30")
+}
+TRENDLINEADDER <- function(model, x) {
+  xs <- seq(min(x), max(x), length.out = 200)
+  newd <- data.frame(xs)
+  names(newd) <- names(model$model)[2]
+  pr <- predict(model, newdata = newd, interval = "confidence")
+  polygon(c(xs, rev(xs)), c(pr[, "lwr"], rev(pr[, "upr"])),
+          col = adjustcolor("grey50", alpha.f = 0.3), border = NA)
+  lines(xs, pr[, "fit"], col = "black", lwd = 2)
+}
+
+
+```
+
+## Graph 1: Mean Sea Surface Temperature (SST) vs. Time
+
+```{r}
+
+SSTdata <- subset(projectData, !is.na(Date) & !is.na(MseaSurfaceTemp))
+TIMEdata <- lm(MseaSurfaceTemp ~ Date, data = SSTdata)
+
+
+
+par(mar = c(4.5, 4.5, 5, 1))
+plot(SSTdata$Date, SSTdata$MseaSurfaceTemp, type = "l",
+     col = "darkcyan", lwd = 1.2,
+     xlab = "Year", ylab = "Mean Sea Surface Temperature (°C)")
+abline(TIMEdata, col = "black", lty = 2, lwd = 2)
+TITLEADDER("Monthly Mean Sea Surface Temperature vs. Time", "1978-11-01 to 2024-04-01")
+summary(TIMEdata)$coefficients
+
+
+```
+
+## Graph 2: Surface Temperature vs. Sea Ice Area
+
+```{r}
+
+TEMPdata <- subset(projectData, !is.na(surfaceTemp) & !is.na(SIA))
+TEMPmod <- lm(surfaceTemp ~ SIA, data = TEMPdata)
+
+
+par(mar = c(4.5, 4.5, 5, 1))
+plot(TEMPdata$SIA, TEMPdata$surfaceTemp, type = "n",
+     xlab = "Monthly Sea Ice Area (km²)",
+     ylab = "Monthly Mean Surface Temperature (°C)")
+points(TEMPdata$SIA, TEMPdata$surfaceTemp, pch = 16, col = adjustcolor("purple", alpha.f = 0.6))
+TRENDLINEADDER(TEMPmod,TEMPdata$SIA)
+TITLEADDER("Surface Temperature vs. Sea Ice Area","1978-11-01 to 2024-04-01")
+
+summary(TEMPmod)$coefficients
+
+
+
+```
+
+## Graph 3: Surface Temperature vs. Sea Ice Concentration
+
+```{r}
+
+CONCdata <- subset(projectData, !is.na(surfaceTemp) & !is.na(SIA))
+CONCmod <- lm(surfaceTemp ~ SIA, data = CONCdata)
+
+
+par(mar = c(4.5, 4.5, 5, 1))
+plot(CONCdata$SIA, CONCdata$surfaceTemp, type = "n",
+     xlab = "Mean Sea Ice Concentration (%)",
+     ylab = "Monthly Mean Surface Temperature (°C)")
+points(CONCdata$SIA, CONCdata$surfaceTemp,pch = 16, col = adjustcolor("purple", alpha.f = 0.6))
+TRENDLINEADDER(CONCmod,CONCdata$SIA)
+TITLEADDER("Surface Temperature vs. Sea Ice Concentration", "1978-11-01 to 2024-04-01")
+
+
+summary(CONCmod)$coefficients
+
+
+```

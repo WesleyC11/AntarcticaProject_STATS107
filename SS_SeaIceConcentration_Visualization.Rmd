@@ -7,7 +7,7 @@ This visualization compares annual mean sea ice concentration in two Antarctic s
 
 ```{r}
 sea_ice_data <- read.csv("SeaIceConc_Clean.csv")
-sea_ice_data <- subset(sea_ice, Subregion %in% c("Anv", "Avi"))
+sea_ice_data <- subset(sea_ice_data, Subregion %in% c("Anv", "Avi"))
 ```
 
 ```{r}

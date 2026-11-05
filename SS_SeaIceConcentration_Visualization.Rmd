@@ -1,0 +1,45 @@
+---
+title: "Visualization - Sea Ice Concentration vs Time"
+output: html_document
+date: "2026-10-28"
+---
+This visualization compares annual mean sea ice concentration in two Antarctic subregions, Anv and Avi, from 1978 to 2024.
+
+```{r}
+sea_ice_data <- read.csv("SeaIceConc_Clean.csv")
+sea_ice_data <- subset(sea_ice_data, Subregion %in% c("Anv", "Avi"))
+```
+
+```{r}
+sea_ice_annual <- with(sea_ice_data,
+  tapply(Mean_sea_ice_conc,
+         list(Year, Subregion),
+         mean, na.rm = TRUE)
+)
+```
+
+## Visualization: Sea Ice Concentration vs Time
+
+```{r}
+years <- as.numeric(rownames(sea_ice_annual))
+
+plot(years, sea_ice_annual[, "Anv"],
+     type = "l",
+     col = "red",
+     xlab = "Monthly Measurements from 1979-2023",
+     ylab = "Annual Mean Sea Ice Concentration (%)",
+     main = "Sea Ice Concentration vs Time",
+     ylim = c(0, 100))
+
+lines(years, sea_ice_annual[, "Avi"],
+      col = "blue")
+```
+
+```{r}
+dir.create("plots", showWarnings = FALSE)
+
+png("plots/sea_ice_two_regions.png",
+    width = 1000, height = 600)
+```
+
+The visualization compares the yearly average sea ice concentration between Anvers Island and Avian Island. It showed us that the Avian Island (blue) generally has higher sea ice concentration than Anvers Island (red). There is a clear decrease in sea ice concentration over time.

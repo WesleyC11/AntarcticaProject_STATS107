@@ -1,0 +1,12 @@
+---
+title: "Halfway Project Report - R Analysis of Antarctic Climate Data"
+author: "Wesley Cross, Selina Syed, Jack Donnelley"
+date: "2026-11-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Quick check!

@@ -1,4 +1,4 @@
-# AntarcticaProject_STATS107
+# Antarctica Project - STATS107
 This is the Repository we will use for the Quarter Project for Stats 107, for Wesley, Jack, Selina, Dr. Sanchez Gomez, and Nathalie!
 
 **The Most Essential Aspects Of This Repository Are:**

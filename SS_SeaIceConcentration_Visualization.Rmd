@@ -3,6 +3,7 @@ title: "Visualization - Sea Ice Concentration vs Time"
 output: html_document
 date: "2026-10-28"
 ---
+
 This visualization compares annual mean sea ice concentration in two Antarctic subregions, Anv and Avi, from 1978 to 2024.
 
 ```{r}

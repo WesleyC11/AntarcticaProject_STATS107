@@ -12,10 +12,6 @@ library(lubridate)
 library(tidyverse)
 ```
 
-## Link to GitHub Repository
-
-<https://github.com/WesleyC11/AntarcticaProject_STATS107>
-
 **Note to myself: Update the README of all files (then, describe how to reproduce your results with a step-by-step series of instructions), and don't forget to put PDF of final report in the repository before submission!**
 
 ## Data Description Section for Report
@@ -143,16 +139,4 @@ WAPareamodel$fitted.values[538] - WAPareamodel$fitted.values[1]
 
 
 ##Here using the same approach of a linear model, it appears that the slope of the trend line is -4.812, indicating a negative relationship between time and the amount of sea ice in the WAP region. Furthermore, by subracting the last and first value of the trendline, we can see the average amount of sea ice area has decreased by -78,942.7 km² over the years surveyed. 
-
-
-##CHECK BELOW - advice from Nathalie but I suspect ggplot functions aren't allowed.
-
-#seaicearea_WAPdates %>%
- # mutate(x = (Month / 12) + Year) %>%
- # ggplot(aes(x = x, y = Sea_ice_area)) +
-    #scale_x_continuous(lim = c(1981, 1982)) +
-    #geom_point() +
-  #  geom_line() +
-  #  theme_bw()
-
 ```

@@ -2,11 +2,10 @@
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 options(scipen = 999)
 ```
+
 ## NOTE: Add points at start and end of each graph to show change
 
-
 ## Data Loading and Integration
-
 
 ```{r}
 
@@ -76,7 +75,7 @@ plot(SSTdata$Date, SSTdata$MseaSurfaceTemp, type = "l",
 abline(TIMEdata, col = "black", lty = 2, lwd = 2)
 TITLEADDER("Monthly Mean Sea Surface Temperature vs. Time", "1978-11-01 to 2024-04-01")
 summary(TIMEdata)$coefficients
-
+TIMEdata$fitted.values
 
 ```
 
@@ -97,9 +96,7 @@ TRENDLINEADDER(TEMPmod,TEMPdata$SIA)
 TITLEADDER("Surface Temperature vs. Sea Ice Area","1978-11-01 to 2024-04-01")
 
 summary(TEMPmod)$coefficients
-
-
-
+TEMPmod$coefficients
 ```
 
 ## Graph 3: Surface Temperature vs. Sea Ice Concentration

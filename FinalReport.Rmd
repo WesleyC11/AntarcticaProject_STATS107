@@ -155,7 +155,7 @@ WAPareamodel <- lm(seaicearea_subsetWAP$Sea_ice_area
                    ~ seaicearea_subsetWAP$Date2)
 ```
 
-### Figure 5 Analysis: 
+### Figure 5 Analysis:
 
 Figure 5 below compares yearly average sea ice concentration in two Antarctic subregions, Anver's Island and Avian Island, from 1979 to 2023. The purpose of this analysis is to look at two distant areas of the WAP region (200 X 200 km areas around each island), and determine if the sea ice loss trends appear to be localized or widespread across the Peninsula. The blue line in the graph indicates Avian Island's area, while the red line indicates Anver's Island. It is expected that the blue line would be above the red line in the graph since Avian Island is more southerly than Anvers Island, however there is a clear decrease in sea ice concentration over time and both islands appear to follow the same trends annually. Because both of these lines are almost exactly in sync in terms of rising and falling, this suggests that the effects of climate change in the WAP region are widespread, but the effect is lessened on areas closer to the true geographical South Pole (Avian Island). Concentrations of ice drop to less than 20% in recent years for the areas surveyed.
 
@@ -181,7 +181,7 @@ lines(years, sea_ice_annual[, "Avi"],
       col = "blue")
 ```
 
-### Figure 6, 7, and 8 Analysis: 
+### Figure 6, 7, and 8 Analysis:
 
 Figure 6 below analyzes the monthly ocean temperatures at Palmer Station vs. Time, again including a linear regression trend line to highlight the relationship between the variables. Using the same "fitted.values" approach for the linear regression, the difference between the first and last value in the fitted line is +0.10°C, indicating that sea surface temperatures have not increased as quickly over the time measured compared to air temperatures at Palmer Station. Sea surface temperatures have increased over the analyzed time, however slightly, due to increasing climate change.
 

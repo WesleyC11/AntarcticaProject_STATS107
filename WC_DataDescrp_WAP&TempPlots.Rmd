@@ -12,7 +12,7 @@ library(lubridate)
 library(tidyverse)
 ```
 
-**Note to myself: Update the README of all files (then, describe how to reproduce your results with a step-by-step series of instructions), and don't forget to put PDF of final report in the repository before submission!**
+**Note to myself: Update the README of all files and don't forget to put PDF of final report in the repository before submission!**
 
 ## Data Description Section for Report
 
@@ -35,14 +35,26 @@ weather <- read.csv("Monthly_Weather_Clean.csv")
 seaicearea <- read.csv("SeaIceArea_Clean.csv")
 seaiceconc <- read.csv("SeaIceConc_Clean.csv")
 
-#Mean Temperature Summary in °C at Palmer Station, Antarctica:
+##Practice code for making the visualizations/obs. tables for this section:
+##Air temperature 
 summary(weather$Mean_Temperature_C)
-#Mean Sea Surface Temperature Summary in °C at Palmer Station, Antarctica:
+length(weather$Mean_Temperature_C)
+
+##Mean Sea Surface Temperature Summary (in °C) and # of Obs. at Palmer Station, Antarctica:
 summary(weather$Mean_Sea_Surface_Temperature_C)
-#Sea Ice Area Summary For All Regions Surveyed by Data in km²:
-summary(seaicearea$Sea_ice_area)
-#Sea Ice Concentration Summary for All Regions Surveyed by Data in %:
-summary(seaiceconc$Mean_sea_ice_conc)
+length(weather$Mean_Sea_Surface_Temperature_C)
+
+##Sea Ice Area Data Summary and # of Obs. For Total WAP Region, in km²:
+
+for_sum <- seaicearea[seaicearea$Subregion == "WAP", ]
+summary(for_sum$Sea_ice_area)
+length(for_sum$Sea_ice_area)
+
+##Sea Ice Concentration Summary and # of Obs. for both Anv and Avi Islands 
+
+another_sum <- seaiceconc[seaiceconc$Subregion %in% c("Anv", "Avi"), ]
+summary(another_sum$Mean_sea_ice_conc)
+length(another_sum$Mean_sea_ice_conc)
 ```
 
 ## Making of WAP Sea Ice Area and Avg. Temps Plots:

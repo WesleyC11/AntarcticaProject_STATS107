@@ -164,6 +164,9 @@ WAPareamodel$fitted.values[538] - WAPareamodel$fitted.values[1]
 
 
 
+
+
+
 ## Left Join in R to combine the linear models made by graphs----------11/17/26
 ##Simple linear regression model with no time analysis:
 
@@ -206,4 +209,6 @@ summary(JoinedModel3)
 ##square root the adjusted r square value and this gives the correlation between x and y, with scale of 1 - 0 - -1 (0 means no correlation, 1 mean +, -1, - correlation). 
 
 #Look into ACF plots, Spearman correlation
+
+plot(JoinedModel3)
 ```

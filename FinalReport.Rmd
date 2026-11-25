@@ -1,5 +1,5 @@
 ---
-title: "Impacts of Climate Change on Antarctic Sea Ice Levels, Using Historical Data from Palmer Station LTER"
+title: "Relationship Between Changing Antarctic Temperatures and Antarctic Sea Ice Levels, Using Historical Data from Palmer Station LTER"
 author: "Wesley Cross, Selina Syed, Jack Donnelley"
 date: "2026-12-04"
 output: pdf_document
@@ -93,7 +93,7 @@ summary(another_sum$Mean_sea_ice_conc)
 length(another_sum$Mean_sea_ice_conc)
 ```
 
-## VISUALIZATIONS/ANALYSIS
+## VISUALIZATIONS
 
 ### Figures 3 and 4 Analysis:
 
@@ -273,13 +273,13 @@ TITLEADDER("Sea Surface Temp vs. Sea Ice Concentration (Anvers Island)", "1978-1
 
 Together, these six visualizations highlight that air and ocean temperatures have been increasing measurably over the analyzed time due to anthropogenic greenhouse gas release, and these increases have a substantial effect on the sea ice area and concentration for the WAP region. It appears that sea ice concentrations for parts of the region have dropped to their lowest recorded levels (less than 10-20% in some cases) and sea ice loss in the region is akin to roughly the size of Panama. Seasonality is strong in Antarctica due to \~6 months of light and \~6 months of darkness out of the year due to its position on the Earth, however, as the linear models show, seasonality is not the explanation for these changes, as sea ice levels are hitting record low levels instead of fluctuating with the season each year; instead, an overall decrease each year is observed.
 
-## FUTURE ANALYSIS
+## ANALYSIS AND MODELING
 
-Based on the data and conclusions drawn from these initial graphs, this study finds there is a significant correlation between sea ice levels and air/sea surface temperature. Our plan for future analysis is informed by this conclusion, and is as follows: We are now interested in incorporating more data sets taken from the Palmer Station LTER website that contains information on the population and breeding habits of the native Adélie penguin (*Pygoscelis adeliae*), or observational studies of marine mammals or seabirds in the area. We plan to compare and contrast local animal data with weather and sea ice characteristics, in order to determine if there are any measurable impacts of sea ice loss on the native animals on the Antarctic Peninsula/Southern Ocean. Specifically, further studies will investigate if it affects the overall year-to-year population and if it affects breeding characteristics, activity patterns, foraging habits, breeding success rates and/or young-rearing habits. We will use multi-characteristic graphs and total dataset information in order to evaluate the relationship between a selected animal population's ecological habits and temperature/sea ice on the Antarctic peninsula, to determine what effects the changing environment is having on species survival.
+## CONCLUSIONS
 
-It should be noted that the working hypothesis is that animal populations (their birth success rates, activity patterns, foraging habits, etc.) should be negatively correlated with increasing sea surface temps, air temperature, and time, and positively correlated with increasing sea-ice area and concentration. This is based on our understanding that the ecosystem of the area is dependent on sub-zero temperatures to maintain their sea-ice habitat area and prey populations. A possible further progression of this analysis is a machine learning model designed and trained to predict future penguin data based on projected weather patterns, but this is dependent on if the study has available time and the technical ability to do this within RStudio.
+Based on the data and conclusions drawn from these initial graphs, this study finds there is a significant correlation between sea ice levels and air/sea surface temperature...?
 
-## CONTRIBUTIONS OF AUTHORS
+## SUMMARY OF CONTRIBUTIONS
 
 **Jack Donnelley:**
 

@@ -12,14 +12,14 @@ Monthly_Weather_Clean.csv
 SeaIceArea_Clean.csv
 SeaIceConc_Clean.csv
 
-**Extra Files Needed for Linking/Showing Other Author's Work/etc:**
+**Extra Files**
 1. The images folder contains some of the maps and other images that were used in the making of the Final Report PDF.
-2. The plots folder only includes a photo of Selina Syed's plot of sea ice concentrations over two different regions plotted on the same graph, made to show the other team members easily.
-3. Project Simple Charts.xlsx is also a collection of preliminary analysis graphs that were used to determine what the graphs may look like in R before any R code was included, again to visualize parts of the analysis to the team before any R code was originally written.
+2. The plots folder only includes a photo of Selina Syed's plot of sea ice concentrations over two different regions plotted on the same graph.
+3. Project Simple Charts.xlsx is also a collection of preliminary analysis graphs that were used to determine what the graphs may look like in R, as a test.
 4. The .R files, .DS_Store files, and .git files in this repo were made automatically during the linking and working process between RStudio and GitHub Desktop, while the .git files were also made during the linking process and the .gitignore was made to reduce the amount of files that had to be committed on GitHub Desktop when a change is made, advised by the TA. Also included are the .Rproj folder, also automatically made when linking the RStudio project and GitHub.
 
 **How To Use This Repository:**
-All graphs, data cleaning to make those graphs, and data analysis was done in each author's own .RMD file, and so by clicking on and running the .RMD file of a specific author (each one starting with either JackD, SS, or WC), one can see how the graphs were made and how they appear in the total report. Writing for each section of the report was done on a Google Doc for Jack and Selina and then transferred into the FinalReport.rmd when they finished, however Wesley's written section is also included in his own .RMD work file. Each author's .RMD file should at least have some comments walking the reader through how the analysis was done, and the written discussions on the graphs was all completed in the final report PDF, and so the .RMD files only demonstrate coding work, not discussion of what graphs signify.  
+All graphs, data cleaning to make those graphs, and data analysis was done in each author's own .RMD file, and so by clicking on and running the .RMD file of a specific author (each one starting with either JackD, SS, or WC), one can see how the graphs were made and how they appear in the total report. 
 
 To generate Figures 3 and 4 from the Final Report, go to WC_DataDescrp_WAP&TempPlots.Rmd and see the comments/code. 
 

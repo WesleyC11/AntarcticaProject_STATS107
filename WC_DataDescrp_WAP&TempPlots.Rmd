@@ -1,18 +1,15 @@
 ---
 title: "Data Description Section & WAP Region vs. Monthly Antarctic Temps"
 author: "Wesley W. Cross"
-date: "Due Nov 6th"
+date: "Due December 4th"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(scipen = 999)
-library(lubridate)
-library(tidyverse)
+source("00_requirements.R")
 ```
-
-**Note to myself: Update the README of all files and don't forget to put PDF of final report in the repository before submission!**
 
 ## Data Description Section for Report
 
@@ -57,7 +54,7 @@ summary(another_sum$Mean_sea_ice_conc)
 length(another_sum$Mean_sea_ice_conc)
 ```
 
-## Making of WAP Sea Ice Area and Avg. Temps Plots:
+## Making of WAP Sea Ice Area, Temps Plots, and Models:
 
 ```{r}
 ##First, the cleaned .csv files are read into the global environment:
@@ -77,9 +74,6 @@ weather_subset <- weather[, c("Date", "Mean_Temperature_C")]
 View(weather_subset)
 
 weather_subset$Date = as.Date(weather_subset$Date, format = "%m/%d/%Y")
-
-weathergooddates <- weather_subset[weather_subset$Date >= as.Date("1979-01-01") & weather_subset$Date <= as.Date("2023-12-01"), ]
-
 
 weathergooddates <- weather_subset[
   weather_subset$Date >= as.Date("1979-01-01") &
@@ -121,16 +115,12 @@ plot(weathergooddates$Date, weathergooddates$Mean_Temperature_C,
 abline(lm(weathergooddates$Mean_Temperature_C ~ weathergooddates$Date), col = "black", lwd = 2)
 
 weathermodel <- lm(weathergooddates$Mean_Temperature_C ~ weathergooddates$Date)
+summary(weathermodel)
 weathermodel$fitted.values
 weathermodel$coefficients
 length(weathermodel$fitted.values)
 weathermodel$fitted.values[526] - weathermodel$fitted.values[1]
 
-## square root of multiple R squared value from summary of linear model
-summary(weathermodel)
-
-
-sqrt(0.008547)
 
 
 
@@ -149,8 +139,8 @@ plot(seaicearea_subsetWAP$Date2, seaicearea_subsetWAP$Sea_ice_area,
 
 abline(lm(seaicearea_subsetWAP$Sea_ice_area ~ seaicearea_subsetWAP$Date2), col = "black", lwd = 2)
 
-WAPareamodel <- lm(seaicearea_subsetWAP$Sea_ice_area
-                   ~ seaicearea_subsetWAP$Date2)
+WAPareamodel <- lm(seaicearea_subsetWAP$Sea_ice_area ~ seaicearea_subsetWAP$Date2)
+summary(WAPareamodel)
 
 WAPareamodel$coefficients
 WAPareamodel$fitted.values
@@ -164,51 +154,156 @@ WAPareamodel$fitted.values[538] - WAPareamodel$fitted.values[1]
 
 
 
+#-----------------------ANALYSIS OF ABOVE TRENDS (11/28)-----------------------
 
 
 
-## Left Join in R to combine the linear models made by graphs----------11/17/26
-##Simple linear regression model with no time analysis:
+
+##I would like to start by including windspeed and other climate variables from the weather dataset in my multiple linear regresssion. However, many climate variables were not recorded (like wind, precipitaiton, etc.) until a few months into 1989. This will take off ~10 years of air temp and sea ice data, but we'll see if it explain enough variation in the model to be worth it in the final model I will post to the final report. Simple seasonality:
+
+weather$Date = as.Date(weather$Date, format = "%m/%d/%Y")
+
+testc <- weather[weather$Date >= as.Date("1989-04-01") 
+                & weather$Date <= as.Date("2023-12-01"), ]
+
+testarea <- seaicearea_fixed[seaicearea_fixed$Date2
+            >= as.Date("1989-04-01") & seaicearea_fixed$Date2 <= as.Date("2023-12-01"), ]
+testarea2 <- testarea[testarea$Subregion == "WAP", c("Date2", "Sea_ice_area")]
+View(testarea2)
+
+JoinedTest <- left_join(testc, testarea2 %>% rename("Date" = "Date2"), 
+                        by = "Date") %>%
+  mutate(
+    month_num  = month(Date),
+    sun_presence = ifelse(month_num %in% c(4,5,6,7,8,9), 0, 1))
+
+View(JoinedTest)
+
+
+TestModel <- lm(JoinedTest$Sea_ice_area ~ JoinedTest$Mean_Temperature_C)
+summary(TestModel)
+
+ 
+##In this TestModel, it appears that mean air temperature alone explains aroud 68% of the variance in sea ice area, with an extremely low p-value, indicating significant relationship between the two and air temp explains over half the variation observed in sea ice over the 35 years observed. Further model building below, multiple linear regression to determine what variables are affecting sea ice area changes, with only variables with a low p-value and at least more than 5% of the variation explained:
+
+
+TestModelMulti <- lm(JoinedTest$Sea_ice_area ~ JoinedTest$sun_presence 
+                     + JoinedTest$Mean_Sea_Surface_Temperature_C
+                     + JoinedTest$Mean_Temperature_C
+                     + JoinedTest$Mean_Windspeed_knots
+                     + JoinedTest$Mean_Precipitation_mm)
+
+summary(TestModelMulti)
+
+
+##WHAT THE MODEL AND SWITCHING OUT SEVERAL VARIALBLES TELLS ME:
+#After attemping several combinations in the linear model with seasonality, sea surface temp, air temp, mean precipitation, and windspeed, it appears that mean precipitation and windspeed are significant predictors in terms of the low p-value, however in concert with the other predictors, explains 1% or less of the variation in the data. On the other hand, sea surface temp paired with seasonality explains around 60% of the variation in the data and are significant predictors. Furthermore, around 75% of the variation is explained by air temp and seasonality alone, and when adding ocean temperatures, this only increases the explanation in the variation by 3%. With all this in mind, it seems air temperature and seasonality are the strongest two predictors of sea ice variation in the region, and so cutting off 10 years of data to accomodate further climate variables for only 1-3% increase in variation does not seem worth it to me. Will keep normal 1979 to 2023 air temp and sea ice area data with seasonlality, and will not include other climate variables. Sea surface temperature explains only 3% more variation when paired with air temps and seasonality, and so likely due to high correlation between the two variables, will not be included in the model since air temp is a stronger predictor overall (75% already explained with air/seasonality alone). Seasonality accounts for about a 7% increase in explanation so will keep.
+
+
+
+
+
+##End of determining significant variables, redoing graph analysis-----------------------------------
+
+## Start by left Join in R to combine the linear models made by graphs, since only will consider a more detailed seasonality variable instead of sun presence (full seasons) and air temp which was already subsetted:
+
+## First simple linear regression model with no time analysis:
 
 JoinedWAPC <- left_join(seaicearea_subsetWAP %>% rename("Date" = "Date2"),
           weathergooddates,
           by = "Date") %>%
   mutate(
     month_num  = month(Date),
-    sun_indicator = ifelse(month_num %in% c(4,5,6,7,8,9), 0, 1))
-  
-View(JoinedWAPC)
+    season = ifelse(month_num %in% c(12, 1, 2), "Summer",
+             ifelse(month_num %in% c(3, 4, 5), "Fall",
+             ifelse(month_num %in% c(6, 7, 8), "Winter",
+             ifelse(month_num %in% c(9, 10, 11), "Spring", NA)))))
+    
 
+JoinedWAPC$season <- as.factor(JoinedWAPC$season)
+
+
+#Seasons of the Southern Hemisphere included, important to note that during Fall/Winter, nighttime can be up to 24 hours a day for up to several weeks. Summer/Spring, daytime hours can be up to 24 hours in a single day for up to several weeks. 
+
+##JoinedWAPC includes seasonality, sea ice area and corresponding temperature for 540 months between 1979 and 2023, now to investigate model:
 JoinedModel1 <- lm(JoinedWAPC$Sea_ice_area ~ JoinedWAPC$Mean_Temperature_C)
 
 summary(JoinedModel1)
 
-#Muliple R-squared: 0.6622
+#Muliple R-squared: 0.6622 amount of variation explained by air temp alone.
 
 
-##Multiple linear regression model with time analysis:
+##Multiple linear regression model with adding time:
 JoinedModel2 <- lm(JoinedWAPC$Sea_ice_area ~ JoinedWAPC$Mean_Temperature_C +
                      JoinedWAPC$Date)
 
 summary(JoinedModel2)
 
-mean(JoinedWAPC$Sea_ice_area, na.rm = TRUE)
-
-sqrt(0.6662)
 
 #Adjusted R-squared: 0.6662
-#Square rooting the adjusted R square value gives the linear regressions correlation between the variables and the y variable.  ~81.6%
+#Square rooting the adjusted R square value gives the linear regressions correlation between the variables and the y variable?
 
-
-##Joined Model 3 considering "seasonality" in Antarica for months:
-JoinedModel3 <- lm(JoinedWAPC$Sea_ice_area ~ JoinedWAPC$Mean_Temperature_C +
-                     JoinedWAPC$sun_indicator)
+##FINAL MULTIPLE LINEAR REGRESSION MODEL WITH GRAPH:
+##Joined Model 3 considering actual seasonality in Antarica for surveyed time:
+JoinedModel3 <- lm(JoinedWAPC$Sea_ice_area ~ JoinedWAPC$season
+                   + JoinedWAPC$Mean_Temperature_C)
 
 summary(JoinedModel3)
 
-##square root the adjusted r square value and this gives the correlation between x and y, with scale of 1 - 0 - -1 (0 means no correlation, 1 mean +, -1, - correlation). 
 
-#Look into ACF plots, Spearman correlation
-
+par(mfrow = c(2, 2))
 plot(JoinedModel3)
+
+#Final Plot showcasing the relationships discussed in JoinedModel3
+ggplot(data = JoinedWAPC, aes(x = Mean_Temperature_C, y = Sea_ice_area,
+      color = season)) +
+  geom_point(size = 2) +
+  scale_color_manual(values = c(
+    "Spring" = "green",
+    "Summer" = "gold",
+    "Fall" = "firebrick",
+    "Winter" = "blue")) +
+  labs(
+    title = "WAP Sea Ice Area vs. Mean Air Temperature, With Seasonality (1979 - 2023)",
+    x = "Monthly Mean Air Temperature (°C) ",
+    y = "Monthly Sea Ice Area (km²)",
+    color = "Season") +
+  theme_classic()
+
+##By increasing the specificity of the season instead of a simple 1-0 variable following the sun's presence, seasonality alone predicts almost 59% of the variance, while temperature alone predicts 66% of the variance. Together these variables account for 82% of the variation in sea ice changes! Residual plots indicate mostly linear relationship, not perfect.
+
+##Correlation between variables appears to be 90.8%, and according to previous work, other climate variables included in our datasets do not account for more than a few percentage points beyond this, and so is a limit on the data we can work with. 82.5% highest explanation of variance achieved with more years included than the previous test models.
+
+
+
+
+##End to Linear Model tests, other important correlational tests:
+------------------------------------------------------------------
+
+##Attempt to use a Spearman correlation test between the variables:
+
+
+cor.test(JoinedWAPC$Sea_ice_area, JoinedWAPC$Mean_Temperature_C, 
+         method = "spearman", exact = FALSE)
+
+#Using the Spearman correlation test above, we establish that the p-value is less than 2.2e-16, so there is strong significance between the predictor and response variable. The rho, or the Spearman correlation coefficient, shows a -0.76, meaning that these variables share a strongly negative correlation as the value is negative and very close to negative 1. No causation proven, only strong support for correlation between the values, and so temperature is a strong statistical predictor of sea ice variability, suggesting that temperature varitability is an important factor when considering changes in sea ice area. 
+
+
+plot(vif(JoinedModel3))
+
+#Adjusted GVIF values are 1.18 and 1.64, indicating multicollinearity is not a concern for the model, as the two predictor variables do not appear highly correlated with each other and so the linear model output should not be skewed.
+
+
+#Look into ACF plots:
+
+Acf(residuals(JoinedModel3),
+    lag.max = 60, 
+    main = "ACF of Sea Ice Linear Regression Residuals",
+    xaxt = "n")
+
+axis(1, at = seq(0, 60, by = 2))
+
+##Autocorrelation is present in residuals; the model does not account for strong correlation between consecutive months or annual patterns, hence the positive lag spikes at 1 lag and consistently every 12 lags (12, 24, 36, etc.) The residuals do not appear to be independent, and so the data from the JoinedModel3 linear regression model may be inaccurate to the true p-values and other correlational values given in the summary of the linear model. Time specific patterns are not fully addressed by model. This is a limitation of the model that this study is using. 
 ```
+
+## Analysis Section of Final Report with New Models:
